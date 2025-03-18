@@ -1,0 +1,87 @@
+.solver-page {
+  padding: 2rem 5%;
+}
+
+.solver-page h1 {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.solver-description {
+  text-align: center;
+  color: #aaa;
+  margin-bottom: 2rem;
+}
+
+.solver-container {
+  display: flex;
+  gap: 2rem;
+}
+
+.upload-section,
+.solution-section {
+  flex: 1;
+  background-color: #1a1a1a;
+  border-radius: 8px;
+  padding: 1.5rem;
+}
+
+.upload-section h2,
+.solution-section h2 {
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.face-uploads {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.face-upload {
+  cursor: pointer;
+}
+
+.upload-box {
+  border: 2px solid #333;
+  border-radius: 4px;
+  height: 150px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  transition: border-color 0.3s ease;
+}
+
+.upload-box:hover {
+  border-color: #0d6efd;
+}
+
+.upload-icon {
+  width: 40px;
+  height: 40px;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="gray" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>');
+  background-repeat: no-repeat;
+  background-position: center;
+  margin-bottom: 10px;
+}
+
+.upload-box p {
+  color: #aaa;
+  font-size: 0.9rem;
+}
+
+.solve-btn {
+  width: 100%;
+  margin-top: 1.5rem;
+  padding: 0.8rem;
+  font-size: 1rem;
+}
+
+.solution-steps {
+  min-height: 400px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #aaa;
+}

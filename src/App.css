@@ -1,3 +1,27 @@
+html {
+  scroll-behavior: smooth;
+  /* Remove scroll snapping to allow continuous scrolling */
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden; /* Prevent horizontal scrolling */
+}
+
+body {
+  overflow-y: auto;
+  background-color: #111;
+  color: #fff;
+  font-family: "Arial", sans-serif;
+}
+
+#root {
+  min-height: 100%;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -5,15 +29,20 @@
   font-family: "Arial", sans-serif;
 }
 
-body {
-  background-color: #111;
-  color: #fff;
-}
-
 .app {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+}
+
+/* Section styling */
+.section {
+  min-height: 100vh;
+  padding: 80px 5% 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  /* Remove snap alignment to allow continuous scrolling */
 }
 
 .btn {

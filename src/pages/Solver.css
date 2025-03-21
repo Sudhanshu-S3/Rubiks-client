@@ -1,7 +1,25 @@
 .solver-page {
-  padding: 2rem 5%;
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  overflow-y: auto; /* Enable vertical scrolling */
+  min-height: 100vh;
 }
 
+.solver-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  flex-wrap: wrap; /* Allow wrapping on smaller screens */
+}
+
+/* For mobile responsiveness */
+@media (max-width: 992px) {
+  .upload-section,
+  .solution-section {
+    flex: 1 1 100%; /* Take full width on smaller screens */
+  }
+}
 .solver-page h1 {
   text-align: center;
   margin-bottom: 1rem;
@@ -9,21 +27,19 @@
 
 .solver-description {
   text-align: center;
-  color: #aaa;
+  color: #555;
   margin-bottom: 2rem;
-}
-
-.solver-container {
-  display: flex;
-  gap: 2rem;
+  line-height: 1.5;
 }
 
 .upload-section,
 .solution-section {
   flex: 1;
-  background-color: #1a1a1a;
+  background-color: #fff;
   border-radius: 8px;
   padding: 1.5rem;
+  min-width: 300px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .upload-section h2,
@@ -32,56 +48,440 @@
   text-align: center;
 }
 
+.upload-instruction {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 1.5rem;
+}
+
+.upload-progress {
+  margin-bottom: 1.5rem;
+}
+
+.progress-bar {
+  height: 8px;
+  background-color: #e0e0e0;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
+.progress-fill {
+  height: 100%;
+  background-color: #4caf50;
+  transition: width 0.3s ease;
+}
+
 .face-uploads {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 1rem;
+  margin-bottom: 1.5rem;
 }
 
 .face-upload {
   cursor: pointer;
+  position: relative;
+  transition: transform 0.2s ease;
+}
+
+.face-upload:hover {
+  transform: translateY(-5px);
+}
+
+.face-upload.active {
+  transform: translateY(-5px);
+}
+
+.face-upload.uploaded .upload-box {
+  border-color: #0d6efd;
 }
 
 .upload-box {
-  border: 2px solid #333;
-  border-radius: 4px;
-  height: 150px;
+  border: 2px dashed #ccc;
+  border-radius: 8px;
+  padding: 1rem;
+  text-align: center;
+  height: 120px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  transition: border-color 0.3s ease;
+  transition: all 0.3s ease;
+  overflow: hidden;
+  position: relative;
 }
 
 .upload-box:hover {
   border-color: #0d6efd;
 }
 
+.upload-box.processed {
+  border-color: #4caf50;
+  background-color: rgba(76, 175, 80, 0.1);
+}
+
+.upload-box.error {
+  border-color: #f44336;
+  background-color: rgba(244, 67, 54, 0.1);
+}
+
 .upload-icon {
   width: 40px;
   height: 40px;
+  border-radius: 50%;
+  background-color: #e0e0e0;
+  margin-bottom: 0.5rem;
+  position: relative;
   background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="gray" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>');
   background-repeat: no-repeat;
   background-position: center;
-  margin-bottom: 10px;
+}
+
+.upload-icon::before {
+  content: "+";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1.5rem;
+  color: #555;
 }
 
 .upload-box p {
+  color: white;
+  font-size: 1rem;
+  margin-bottom: 5px;
+  text-align: center;
+}
+
+.upload-box small {
   color: #aaa;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
+  text-align: center;
+  padding: 0 10px;
+}
+
+.image-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.face-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.processing-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 4px;
+}
+
+.color-grid-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.7);
+  border-radius: 4px;
+}
+
+.color-row {
+  display: flex;
+}
+
+.color-cell {
+  width: 20px;
+  height: 20px;
+  border: 1px solid #000;
+  margin: 1px;
+}
+
+.visualization-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  opacity: 0.6;
+  transition: opacity 0.3s ease;
+}
+
+.visualization-overlay:hover {
+  opacity: 0.9;
 }
 
 .solve-btn {
   width: 100%;
+  padding: 0.75rem;
   margin-top: 1.5rem;
-  padding: 0.8rem;
-  font-size: 1rem;
+  background-color: #2196f3;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
 }
 
-.solution-steps {
+.solve-btn:hover:not(:disabled) {
+  background-color: #1976d2;
+}
+
+.solve-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.btn-disabled {
+  background-color: #666;
+  color: white;
+  cursor: not-allowed;
+  border: none;
+}
+
+.btn-disabled:hover {
+  background-color: #666;
+}
+
+.solution-placeholder {
   min-height: 400px;
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: 20px;
+  text-align: center;
   color: #aaa;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(255, 255, 255, 0.8);
+  padding: 15px;
+  text-align: center;
+}
+
+.solution-placeholder {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.7);
+}
+
+.placeholder-content {
+  text-align: center;
+}
+
+.placeholder-icon {
+  width: 60px;
+  height: 60px;
+  margin: 0 auto 1rem;
+  border-radius: 50%;
+  background-color: #e0e0e0;
+  position: relative;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%23666" stroke-width="1"><rect x="2" y="2" width="20" height="20" rx="5" stroke="%23666" fill="none" /><path d="M5 5 L19 19" /><path d="M19 5 L5 19" /></svg>');
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.error-message {
+  background-color: #ffebee;
+  border: 1px solid #ffcdd2;
+  color: #c62828;
+  padding: 1rem;
+  border-radius: 4px;
+  margin-bottom: 1.5rem;
+}
+
+/* Add these styles for the solution preview */
+.solution-preview {
+  display: flex;
+  flex-direction: column;
+  height: 400px;
+  position: relative;
+  background: #f8f9fa;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #eee;
+}
+
+.solution-preview canvas {
+  touch-action: none;
+}
+
+.solution-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+@media (max-width: 992px) {
+  .upload-section,
+  .solution-section {
+    flex: 1 1 100%;
+  }
+
+  .face-uploads {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .solver-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 576px) {
+  .face-uploads {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Add these styles to your existing Solver.css file */
+
+.solution-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 20px;
+}
+
+.cube-visualization {
+  position: relative;
+  height: 350px;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.solution-controls {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  padding: 10px;
+  background-color: rgba(0, 0, 0, 0.1);
+  border-radius: 0 0 10px 10px;
+}
+
+.control-btn {
+  background-color: rgba(255, 255, 255, 0.9);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.control-btn:hover:not(:disabled) {
+  background-color: #007bff;
+  color: white;
+  transform: scale(1.1);
+}
+
+.control-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.play-btn {
+  width: 50px;
+  height: 50px;
+  font-size: 24px;
+}
+
+.speed-btn {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.current-move {
+  text-align: center;
+  padding: 10px;
+  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: 5px;
+  margin: 0 auto;
+  width: fit-content;
+}
+
+.move-notation {
+  font-size: 24px;
+  font-weight: bold;
+  color: #007bff;
+}
+
+.solution-steps {
+  max-height: 250px;
+  overflow-y: auto;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 15px;
+}
+
+/* Highlight current move in the solution steps */
+.solution-step.current {
+  background-color: rgba(0, 123, 255, 0.2);
+  border-left: 4px solid #007bff;
+}
+
+/* Add these styles to your existing Solver.css file */
+
+.button-group {
+  display: flex;
+  gap: 10px;
+  margin-top: 1.5rem;
+}
+
+.demo-btn {
+  flex: 1;
+  padding: 0.75rem;
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.demo-btn:hover:not(:disabled) {
+  background-color: #5a6268;
+}
+
+.demo-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.solve-btn {
+  flex: 2;
 }

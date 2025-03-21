@@ -1,0 +1,175 @@
+.solution-viewer {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+  height: 100%;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.solution-info {
+  margin-bottom: 20px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+}
+
+.solution-info h3 {
+  margin: 0 0 12px 0;
+  color: #333;
+  font-size: 1.2rem;
+}
+
+.solution-stats {
+  display: flex;
+  gap: 16px;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-label {
+  font-size: 0.8rem;
+  color: #777;
+}
+
+.stat-value {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.solution-steps-list {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.solution-step {
+  margin-bottom: 12px;
+  border-radius: 6px;
+  overflow: hidden;
+  transition: box-shadow 0.2s ease;
+  border: 1px solid #eee;
+}
+
+.solution-step.active {
+  border-color: #3498db;
+  box-shadow: 0 0 0 1px #3498db;
+}
+
+.solution-step.expanded {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.step-header {
+  padding: 10px 12px;
+  background-color: #f9f9f9;
+  cursor: pointer;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.step-progress-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 3px;
+  width: 100%;
+  background-color: #eee;
+}
+
+.step-progress-bar {
+  height: 100%;
+  background-color: #3498db;
+  transition: width 0.3s ease;
+}
+
+.step-title {
+  margin: 0 0 4px 0;
+  font-size: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.step-toggle {
+  font-size: 0.7rem;
+  color: #777;
+}
+
+.step-description {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.step-moves {
+  padding: 12px;
+  background-color: #fff;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.move {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 30px;
+  height: 30px;
+  padding: 0 6px;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.move:hover {
+  background-color: #e0e0e0;
+}
+
+.move.completed {
+  background-color: #e1f5fe;
+  color: #0277bd;
+}
+
+.move.active {
+  background-color: #3498db;
+  color: white;
+  transform: scale(1.1);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.solution-viewer-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  text-align: center;
+  color: #777;
+  font-style: italic;
+}
+
+/* Animation for move transitions */
+@keyframes movePulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.move.active {
+  animation: movePulse 1s infinite;
+}

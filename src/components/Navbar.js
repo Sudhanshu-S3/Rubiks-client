@@ -17,6 +17,10 @@ function Navbar() {
                 <Link to="/faq">FAQ</Link>
                 <Link to="/contact">Contact</Link>
             </div>
+            <div className="home-buttons">
+                <a href="#solver" className="btn btn-primary">Start Solving</a>
+                <a href="#features" className="btn btn-secondary">Learn More</a>
+            </div>
         </nav>
     );
 }

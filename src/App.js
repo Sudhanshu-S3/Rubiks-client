@@ -1,5 +1,4 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import Features from './pages/Features';
@@ -9,16 +8,23 @@ import './App.css';
 
 function App() {
   return (
-    <Router>
-      <div className="app">
-        <Navbar />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/features" element={<Features />} />
-          <Route path="/solver" element={<Solver />} />
-        </Routes>
-      </div>
-    </Router>
+    <div className="app">
+      <Navbar />
+
+      <section id="home" className="section">
+        <Home />
+      </section>
+
+      <section id="features" className="section">
+        <Features />
+      </section>
+
+      <section id="solver" className="section">
+        <Solver />
+      </section>
+
+      {/* Add additional sections for Tutorial, Community, FAQ, Contact */}
+    </div>
   );
 }
 

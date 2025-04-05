@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect, useMemo, forwardRef, useImperativeHandle } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, Text, PerspectiveCamera } from '@react-three/drei';
-import * as THREE from 'three';
+import { OrbitControls } from '@react-three/drei';
+import THREE from '../utils/three-shim';
 
 // Individual cubie with better styling and texture
 const Cubie = ({ position, colors, index, pieceRef }) => {
@@ -195,15 +195,16 @@ const RubiksCubeModel = ({
         }
     }, [currentMove]);
 
-    // Process the move queue
+    // Process the move queue - Fix the queue execution logic
     useEffect(() => {
-        if (moveQueue.length > 0 && !moveInProgressRef.current) {
+        if (moveQueue.length > 0 && !moveInProgressRef.current && !isRotating) {
             const nextMove = moveQueue.shift();
+            setMoveQueue([...moveQueue]); // Create a new array to force state update
             executeMove(nextMove);
         }
     }, [moveQueue, isRotating]);
 
-    // Function to execute a move on the cube
+    // Function to execute a move on the cube - Fix the race condition 
     const executeMove = (moveNotation) => {
         if (!groupRef.current || !moveNotation || moveInProgressRef.current) return;
 
@@ -298,7 +299,7 @@ const RubiksCubeModel = ({
         const stepAngle = totalRotation / steps;
         let currentStep = 0;
 
-        // Animation function
+        // Animation function - Fix completion handling
         const animate = () => {
             if (currentStep < steps) {
                 tempGroup.rotation[axis] += stepAngle;
@@ -307,6 +308,9 @@ const RubiksCubeModel = ({
             } else {
                 // Update positions after rotation
                 tempGroup.updateMatrixWorld();
+
+                // Create a copy of pieces to modify
+                const newPieces = [...pieces];
 
                 selectedPieces.forEach(({ mesh, index }) => {
                     // Get new world position
@@ -318,15 +322,11 @@ const RubiksCubeModel = ({
                     const newPosY = Math.round(worldPos.y * 2) / 2;
                     const newPosZ = Math.round(worldPos.z * 2) / 2;
 
-                    // Update piece position in state
-                    setPieces(prevPieces => {
-                        const newPieces = [...prevPieces];
-                        newPieces[index] = {
-                            ...newPieces[index],
-                            position: [newPosX, newPosY, newPosZ]
-                        };
-                        return newPieces;
-                    });
+                    // Update piece position in the copy
+                    newPieces[index] = {
+                        ...newPieces[index],
+                        position: [newPosX, newPosY, newPosZ]
+                    };
 
                     // Remove from temp group and add back to main group
                     tempGroup.remove(mesh);
@@ -334,25 +334,35 @@ const RubiksCubeModel = ({
                     mesh.position.set(newPosX, newPosY, newPosZ);
                 });
 
+                // Set pieces state once with the fully updated array
+                setPieces(newPieces);
+
                 // Clean up temp group
                 groupRef.current.remove(tempGroup);
 
-                // Reset rotation state
-                moveInProgressRef.current = false;
-                setIsRotating(false);
+                // Use a timeout to ensure state updates before processing next move
+                setTimeout(() => {
+                    // Reset rotation state
+                    moveInProgressRef.current = false;
+                    setIsRotating(false);
 
-                // Notify that move is complete
-                if (onMoveComplete) {
-                    onMoveComplete(moveNotation);
-                }
+                    // Notify that move is complete
+                    if (onMoveComplete) {
+                        onMoveComplete(moveNotation);
+                    }
 
-                // Process next move if queue exists
-                if (moveQueue.length > 0) {
-                    const nextMove = moveQueue.shift();
-                    setTimeout(() => executeMove(nextMove), 50);
-                } else if (isScrambling && onScrambleComplete) {
-                    onScrambleComplete();
-                }
+                    // Process next move if queue exists - moved outside to avoid recursion
+                    if (moveQueue.length > 0) {
+                        // Allow React to reconcile state before next move
+                        setTimeout(() => {
+                            const nextMove = moveQueue.shift();
+                            setMoveQueue([...moveQueue]); // Force update
+                            executeMove(nextMove);
+                        }, 50);
+                    } else if (isScrambling && onScrambleComplete) {
+                        onScrambleComplete();
+                    }
+                }, 20);
             }
         };
 
@@ -360,9 +370,14 @@ const RubiksCubeModel = ({
         animate();
     };
 
-    // Queue multiple moves
+    // Queue multiple moves - Fix the queueing system
     const queueMoves = (moves) => {
-        if (Array.isArray(moves)) {
+        if (!Array.isArray(moves) || moves.length === 0) return;
+
+        // Clear existing queue if this is a new sequence
+        if (moveInProgressRef.current === false && moveQueue.length === 0) {
+            setMoveQueue([...moves]);
+        } else {
             setMoveQueue(prev => [...prev, ...moves]);
         }
     };

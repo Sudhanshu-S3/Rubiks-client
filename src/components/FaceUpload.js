@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './FaceUpload.css';
+import { processCubeImage } from '../utils/cubeApi';
 
 const FaceUpload = ({ face, onUploadComplete }) => {
     const [image, setImage] = useState(null);
@@ -17,53 +18,45 @@ const FaceUpload = ({ face, onUploadComplete }) => {
         'B': 'Back (Blue)'
     };
 
-    const handleImageChange = async (e) => {
-        const file = e.target.files[0];
+    const handleUpload = async (file) => {
         if (!file) return;
 
-        // Clear previous states
-        setError(null);
         setLoading(true);
-
-        // Create preview
-        const reader = new FileReader();
-        reader.onloadend = () => {
-            setPreview(reader.result);
-        };
-        reader.readAsDataURL(file);
-
-        // Create form data
-        const formData = new FormData();
-        formData.append('image', file);
-        formData.append('face', face);
+        setError('');
 
         try {
-            const response = await fetch('http://localhost:5000/api/cube/process-image', {
-                method: 'POST',
-                body: formData,
-            });
+            // Display image preview immediately
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                setImage(event.target.result);
+            };
+            reader.readAsDataURL(file);
 
-            const data = await response.json();
+            // Process image with consistent API
+            const data = await processCubeImage(file, face);
 
-            if (!response.ok) {
+            if (data.success) {
+                setColorGrid(data.colors);
+
+                // Pass data to parent component
+                onUploadComplete(face, {
+                    colors: data.colors,
+                    visualization: data.visualizationUrl
+                });
+            } else {
                 throw new Error(data.error || 'Failed to process image');
             }
-
-            setImage(data.originalImage);
-            setColorGrid(data.faceColors[face]);
-
-            // Pass data to parent component
-            onUploadComplete(face, {
-                colors: data.faceColors[face],
-                visualization: data.visualizationUrl
-            });
-
         } catch (err) {
             console.error('Error uploading face:', err);
             setError(err.message || 'Failed to process image');
         } finally {
             setLoading(false);
         }
+    };
+
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        handleUpload(file);
     };
 
     return (

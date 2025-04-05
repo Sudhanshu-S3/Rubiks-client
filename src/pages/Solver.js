@@ -3,6 +3,7 @@ import axios from 'axios';
 import SolutionViewer from '../components/SolutionViewer';
 import EnhancedCubeModel from '../components/EnhancedCubeModel';
 import './Solver.css';
+import { processCubeImage, solveCube } from '../utils/cubeApi';
 
 function Solver() {
     // State for cube images and detected colors
@@ -19,6 +20,11 @@ function Solver() {
         B: Array(3).fill().map(() => Array(3).fill(null))
     });
 
+    // Add missing state variables for cube state tracking
+    const [cubeState, setCubeState] = useState(null);
+    const [originalCubeState, setOriginalCubeState] = useState(null);
+    const [currentStep, setCurrentStep] = useState(0);
+
     const [loading, setLoading] = useState(false);
     const [solution, setSolution] = useState(null);
     const [error, setError] = useState('');
@@ -33,6 +39,7 @@ function Solver() {
     // Solution visualization states
     const [currentMoveIndex, setCurrentMoveIndex] = useState(-1);
     const [isAnimating, setIsAnimating] = useState(false);
+    const [currentMove, setCurrentMove] = useState(null);
 
     // Check if all faces are uploaded and processed
     useEffect(() => {
@@ -41,13 +48,15 @@ function Solver() {
         );
 
         setUploadComplete(allFacesProcessed);
+
+        // If all faces are processed, update cube state
+        if (allFacesProcessed) {
+            setCubeState({ ...faceColors });
+        }
     }, [faceColors]);
 
     // Handle image upload for a face
-    const handleImageUpload = async (face, e) => {
-        const file = e.target.files[0];
-        if (!file) return;
-
+    const handleFaceUpload = async (file, face) => {
         try {
             // Update UI immediately with image preview
             const reader = new FileReader();
@@ -64,28 +73,19 @@ function Solver() {
             setLoading(true);
             setProcessingStatus({ ...processingStatus, [face]: 'processing' });
 
-            const formData = new FormData();
-            formData.append('image', file);
-            formData.append('face', face);
+            // Use shared API function
+            const response = await processCubeImage(file, face);
 
-            // Send to API for processing
-            const response = await axios.post('http://localhost:5000/api/cube/processCubeImage', formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
-            });
-
-            if (response.data.success) {
+            if (response.success) {
                 // Update the detected colors
                 setFaceColors(prev => ({
                     ...prev,
-                    [face]: response.data.colors
+                    [face]: response.colors
                 }));
-
                 setProcessingStatus({ ...processingStatus, [face]: 'success' });
                 setError('');
             } else {
-                throw new Error(response.data.error || 'Failed to process image');
+                throw new Error(response.error || 'Failed to process image');
             }
         } catch (error) {
             console.error('Error processing face image:', error);
@@ -106,27 +106,26 @@ function Solver() {
         try {
             setLoading(true);
 
-            // Send complete cube state for solving
-            const response = await axios.post('http://localhost:5000/api/cube/compile', {
-                faces: faceColors
-            });
+            // Send complete cube state for solving using shared API
+            const solutionData = await solveCube(faceColors);
 
-            if (response.data.success) {
-                const solutionData = response.data;
-
+            if (solutionData.success) {
                 // Store the original state for resets
-                solutionData.origState = { ...faceColors };
-
-                setSolution(solutionData);
-                setCurrentMoveIndex(-1); // Reset to initial state
-                setError('');
+                setOriginalCubeState({ ...faceColors });
+                setCubeState({ ...faceColors });
+                setSolution({
+                    ...solutionData,
+                    origState: { ...faceColors } // Add original state to solution
+                });
+                setCurrentStep(0);
+                setCurrentMoveIndex(-1); // Reset move index
+                setCurrentMove(null); // Reset current move
             } else {
-                throw new Error(response.data.error || 'Failed to solve cube');
+                throw new Error(solutionData.error || 'Failed to solve cube');
             }
         } catch (error) {
             console.error('Error solving cube:', error);
             setError(`Failed to solve cube: ${error.message}`);
-            setSolution(null);
         } finally {
             setLoading(false);
         }
@@ -147,7 +146,7 @@ function Solver() {
                 setCurrentFace(face);
 
                 // Fetch the demo image
-                const response = await fetch(`/imageDemo/${getFaceName(face).split(' ')[0]}.jpeg`);
+                const response = await fetch(`${process.env.PUBLIC_URL}/imageDemo/${getFaceName(face).split(' ')[0]}.jpeg`);
                 const blob = await response.blob();
 
                 // Create a file object from the blob
@@ -172,21 +171,17 @@ function Solver() {
                 formData.append('face', face);
 
                 // Process image with backend API
-                const apiResponse = await axios.post('http://localhost:5000/api/cube/processCubeImage', formData, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data'
-                    }
-                });
+                const responses = await processCubeImage(file, face);
 
-                if (apiResponse.data.success) {
+                if (responses.success) {
                     // Update the detected colors
                     setFaceColors(prev => ({
                         ...prev,
-                        [face]: apiResponse.data.colors
+                        [face]: responses.colors
                     }));
                     setProcessingStatus(prev => ({ ...prev, [face]: 'success' }));
                 } else {
-                    throw new Error(apiResponse.data.error || `Failed to process ${face} face`);
+                    throw new Error(responses.error || `Failed to process ${face} face`);
                 }
 
                 // Add a small delay between face processing to avoid overwhelming the backend
@@ -208,55 +203,107 @@ function Solver() {
 
     const handleResetSolution = () => {
         resetToInitialState();
-        setSolution(null);
+        // Don't set solution to null if you want to keep the solution visible
+        // setSolution(null);
     };
 
-    // Handle solution move completion
-    const handleMoveComplete = () => {
+    // Modified handleMoveComplete function
+    const handleMoveComplete = (moveData) => {
         setIsAnimating(false);
+        setCurrentMove(null);
+
+        // If there's a moveIndex, update the currentMoveIndex
+        if (typeof moveData === 'object' && moveData.index !== undefined) {
+            setCurrentMoveIndex(moveData.index);
+        } else if (currentMoveIndex >= 0) {
+            // Increment the move index if it's a direct move
+            setCurrentMoveIndex(currentMoveIndex + 1);
+        }
+
+        // Process any queued moves
+        if (moveQueue.length > 0) {
+            const nextMove = moveQueue.shift();
+            setMoveQueue([...moveQueue]); // Create new array to force update
+            executeMove(nextMove);
+        }
     };
 
-    // Execute a specific move in the solution
-    const executeMove = (moveIndex) => {
-        if (!solution || !solution.solution || isAnimating) return;
+    // Add a move queue for sequential execution
+    const [moveQueue, setMoveQueue] = useState([]);
 
-        const moves = solution.solution.split(' ').filter(m => m.trim() !== '');
-        if (moveIndex >= 0 && moveIndex < moves.length) {
+    // Modified executeMove function to handle both index and notation
+    const executeMove = (moveData) => {
+        if (!solution || !solution.solution) return;
+
+        // Handle both formats: direct move notation or {index, notation} object
+        let moveIndex = -1;
+        let moveNotation = '';
+
+        if (typeof moveData === 'string') {
+            // Direct move notation
+            moveNotation = moveData;
+            // Find the index in the solution
+            moveIndex = solution.solution.split(' ')
+                .filter(m => m.trim() !== '')
+                .findIndex(m => m === moveData);
+        } else if (typeof moveData === 'object') {
+            // Object with index and notation
+            moveIndex = moveData.index;
+            moveNotation = moveData.notation;
+        } else if (typeof moveData === 'number') {
+            // Just index
+            const moves = solution.solution.split(' ').filter(m => m.trim() !== '');
+            if (moveData >= 0 && moveData < moves.length) {
+                moveIndex = moveData;
+                moveNotation = moves[moveData];
+            }
+        }
+
+        if (moveIndex >= 0 && moveNotation) {
             setCurrentMoveIndex(moveIndex);
             setIsAnimating(true);
+            setCurrentMove(moveNotation);
 
             if (cubeModelRef.current) {
-                cubeModelRef.current.executeMove(moves[moveIndex]);
+                cubeModelRef.current.executeMove(moveNotation);
             }
-        } else {
-            setIsAnimating(false);
         }
     };
 
     // Go to next move
     const nextMove = () => {
+        if (isAnimating) return; // Don't allow new moves while animating
+
         if (currentMoveIndex < (solution?.solution?.split(' ').filter(m => m.trim() !== '').length - 1)) {
             executeMove(currentMoveIndex + 1);
         }
     };
 
-    // Go to previous move
+    // Improved prevMove function
     const prevMove = () => {
+        if (isAnimating || !solution) return;
+
         if (currentMoveIndex > 0) {
-            // Apply inverse of previous moves to go back
+            // Reset to initial state
             resetToInitialState();
 
-            // Then apply all moves up to the target move
+            // Then reapply all moves up to the target
             const moves = solution.solution.split(' ').filter(m => m.trim() !== '');
             const targetIndex = currentMoveIndex - 1;
 
-            if (cubeModelRef.current) {
-                cubeModelRef.current.queueMoves(moves.slice(0, targetIndex + 1));
-                setCurrentMoveIndex(targetIndex);
-            }
+            // Allow time for reset to complete
+            setTimeout(() => {
+                if (cubeModelRef.current) {
+                    // Queue all moves up to but not including the current move
+                    const movesToExecute = moves.slice(0, targetIndex + 1);
+                    cubeModelRef.current.queueMoves(movesToExecute);
+
+                    // Update move index after queuing
+                    setCurrentMoveIndex(targetIndex);
+                }
+            }, 100);
         } else if (currentMoveIndex === 0) {
             resetToInitialState();
-            setCurrentMoveIndex(-1);
         }
     };
 
@@ -264,13 +311,20 @@ function Solver() {
     const resetToInitialState = () => {
         setCurrentMoveIndex(-1);
         setIsAnimating(false);
+        setCurrentMove(null);
+        setMoveQueue([]);
 
-        if (cubeModelRef.current && solution && solution.origState) {
-            // Re-initialize the cube model with the initial state
-            // Small timeout to ensure the state resets properly
+        // Reset cube state to original
+        if (originalCubeState) {
+            setCubeState({ ...originalCubeState });
+
+            // Give time to update state before resetting the model
             setTimeout(() => {
-                cubeModelRef.current = cubeModelRef.current;
-            }, 10);
+                if (cubeModelRef.current) {
+                    // Force re-render by updating the ref with original state
+                    cubeModelRef.current = { ...cubeModelRef.current };
+                }
+            }, 50);
         }
     };
 
@@ -357,7 +411,7 @@ function Solver() {
                                     id={`${face}-face`}
                                     accept="image/*"
                                     capture="environment"
-                                    onChange={(e) => handleImageUpload(face, e)}
+                                    onChange={(e) => handleFaceUpload(e.target.files[0], face)}
                                     style={{ display: 'none' }}
                                 />
                             </div>
@@ -399,7 +453,8 @@ function Solver() {
                             {/* 3D Cube Visualization */}
                             <div className="cube-visualization">
                                 <EnhancedCubeModel
-                                    initialState={faceColors}
+                                    initialState={cubeState || faceColors}
+                                    currentMove={currentMove}
                                     ref={cubeModelRef}
                                     onMoveComplete={handleMoveComplete}
                                     enableControls={!isAnimating}

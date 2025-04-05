@@ -4,6 +4,8 @@ import EnhancedCubeModel from '../components/EnhancedCubeModel';
 import SolutionSteps from '../components/SolutionSteps';
 import './CubeSolver.css';
 
+const URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/';
+
 const CubeSolver = () => {
     const [faceData, setFaceData] = useState({
         U: null, R: null, F: null, D: null, L: null, B: null
@@ -55,7 +57,7 @@ const CubeSolver = () => {
         setError('');
 
         try {
-            const response = await fetch('http://localhost:5000/api/cube/solve', {
+            const response = await fetch(`${URL}/api/cube/solve`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

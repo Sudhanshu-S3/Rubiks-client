@@ -51,11 +51,28 @@ const SolutionSteps = ({ solution, onExecuteMove }) => {
         setIsPlaying(false);
     };
 
-    // Execute a specific move
+    // Standardize executeMove to match SolutionViewer
     const executeMove = (stepIndex, moveIndex) => {
+        if (!solution || !solution.steps) return;
+
+        // Calculate the absolute move index
+        let absoluteMoveIndex = 0;
+        for (let i = 0; i < stepIndex; i++) {
+            absoluteMoveIndex += solution.steps[i].moves.length;
+        }
+        absoluteMoveIndex += moveIndex;
+
+        // Get the move notation
+        const moveNotation = solution.steps[stepIndex].moves[moveIndex];
+
         setActiveStep(stepIndex);
         setActiveMoveIndex(moveIndex);
-        onExecuteMove(solution.steps[stepIndex].moves[moveIndex]);
+
+        // Pass both index and notation to ensure consistency
+        onExecuteMove({
+            index: absoluteMoveIndex,
+            notation: moveNotation
+        });
     };
 
     if (!solution || !solution.steps || solution.steps.length === 0) {
@@ -105,7 +122,7 @@ const SolutionSteps = ({ solution, onExecuteMove }) => {
                                 <button
                                     key={moveIndex}
                                     className={`move-button ${activeStep === stepIndex &&
-                                            activeMoveIndex === moveIndex ? 'active' : ''
+                                        activeMoveIndex === moveIndex ? 'active' : ''
                                         } ${activeStep === stepIndex &&
                                             activeMoveIndex > moveIndex ? 'completed' : ''
                                         }`}

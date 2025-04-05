@@ -142,6 +142,21 @@ const SolutionViewer = ({ cubeState, solution, currentMoveIndex, onSelectMove })
         setExpandedStep(expandedStep === index ? null : index);
     };
 
+    // Modified onSelectMove to handle moves consistently
+    const handleSelectMove = (absoluteMoveIndex) => {
+        if (typeof absoluteMoveIndex !== 'number') return;
+
+        // Find the move notation from the solution
+        const allMoves = solution.solution.split(' ').filter(m => m.trim() !== '');
+        if (absoluteMoveIndex >= 0 && absoluteMoveIndex < allMoves.length) {
+            // Call the passed onSelectMove with both the index and the move notation
+            onSelectMove({
+                index: absoluteMoveIndex,
+                notation: allMoves[absoluteMoveIndex]
+            });
+        }
+    };
+
     if (!solution) {
         return (
             <div className="solution-viewer-empty">
@@ -215,7 +230,7 @@ const SolutionViewer = ({ cubeState, solution, currentMoveIndex, onSelectMove })
                                             <span
                                                 key={moveIdx}
                                                 className={`move ${isCompleted ? 'completed' : ''} ${isActive ? 'active' : ''}`}
-                                                onClick={() => onSelectMove(absoluteMoveIndex)}
+                                                onClick={() => handleSelectMove(absoluteMoveIndex)}
                                             >
                                                 {move}
                                             </span>

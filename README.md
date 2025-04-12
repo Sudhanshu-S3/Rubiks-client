@@ -2,9 +2,6 @@
 
 A modern web application that helps users solve Rubik's Cubes through image recognition and step-by-step solution guidance.
 
-
-![Rubik's Cube Solver](https://drive.google.com/file/d/1Wx5DbyE2kxJlSCsegVOYLcrMSSW1503T/view?usp=sharing)
-
 **Live Demo:** [https://rubiks-client.vercel.app/](https://rubiks-client.vercel.app/)
 
 

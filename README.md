@@ -2,7 +2,7 @@
 
 A modern web application that helps users solve Rubik's Cubes through image recognition and step-by-step solution guidance.
 
-![Rubik's Cube Solver](https://example.com/cube-solver-image.png)
+![Rubik's Cube Solver](https://drive.google.com/file/d/1Wx5DbyE2kxJlSCsegVOYLcrMSSW1503T/view?usp=sharing)
 
 ## Table of Contents
 

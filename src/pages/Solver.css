@@ -2,32 +2,36 @@
   padding: 2rem;
   max-width: 1200px;
   margin: 0 auto;
-  overflow-y: auto; /* Enable vertical scrolling */
+  overflow-y: auto;
   min-height: 100vh;
+  background-color: #111; /* Dark background */
+  color: #eee; /* Light text */
 }
 
 .solver-container {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 2rem;
-  flex-wrap: wrap; /* Allow wrapping on smaller screens */
+  flex-wrap: wrap;
 }
 
 /* For mobile responsiveness */
 @media (max-width: 992px) {
   .upload-section,
   .solution-section {
-    flex: 1 1 100%; /* Take full width on smaller screens */
+    flex: 1 1 100%;
   }
 }
+
 .solver-page h1 {
   text-align: center;
   margin-bottom: 1rem;
+  color: #fff; /* Bright white for headings */
 }
 
 .solver-description {
   text-align: center;
-  color: #555;
+  color: #aaa; /* Lighter gray for descriptions */
   margin-bottom: 2rem;
   line-height: 1.5;
 }
@@ -35,22 +39,24 @@
 .upload-section,
 .solution-section {
   flex: 1;
-  background-color: #fff;
+  background-color: #222; /* Dark background for sections */
   border-radius: 8px;
   padding: 1.5rem;
   min-width: 300px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5); /* Darker shadow */
+  border: 1px solid #333; /* Dark border */
 }
 
 .upload-section h2,
 .solution-section h2 {
   margin-bottom: 1.5rem;
   text-align: center;
+  color: #fff; /* White text for headings */
 }
 
 .upload-instruction {
   font-size: 0.9rem;
-  color: #666;
+  color: #bbb; /* Light gray for instructions */
   margin-bottom: 1.5rem;
 }
 
@@ -60,7 +66,7 @@
 
 .progress-bar {
   height: 8px;
-  background-color: #e0e0e0;
+  background-color: #333; /* Dark progress background */
   border-radius: 4px;
   overflow: hidden;
   margin-bottom: 0.5rem;
@@ -68,7 +74,7 @@
 
 .progress-fill {
   height: 100%;
-  background-color: #4caf50;
+  background-color: #4caf50; /* Keep green for progress */
   transition: width 0.3s ease;
 }
 
@@ -98,7 +104,7 @@
 }
 
 .upload-box {
-  border: 2px dashed #ccc;
+  border: 2px dashed #555; /* Darker dashed border */
   border-radius: 8px;
   padding: 1rem;
   text-align: center;
@@ -110,6 +116,7 @@
   transition: all 0.3s ease;
   overflow: hidden;
   position: relative;
+  background-color: #2a2a2a; /* Dark background for upload box */
 }
 
 .upload-box:hover {
@@ -118,22 +125,22 @@
 
 .upload-box.processed {
   border-color: #4caf50;
-  background-color: rgba(76, 175, 80, 0.1);
+  background-color: rgba(76, 175, 80, 0.2); /* Darker green background */
 }
 
 .upload-box.error {
   border-color: #f44336;
-  background-color: rgba(244, 67, 54, 0.1);
+  background-color: rgba(244, 67, 54, 0.2); /* Darker red background */
 }
 
 .upload-icon {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background-color: #e0e0e0;
+  background-color: #444; /* Darker icon background */
   margin-bottom: 0.5rem;
   position: relative;
-  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="gray" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>');
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>'); /* White icon */
   background-repeat: no-repeat;
   background-position: center;
 }
@@ -145,18 +152,18 @@
   left: 50%;
   transform: translate(-50%, -50%);
   font-size: 1.5rem;
-  color: #555;
+  color: #ccc; /* Lighter plus sign */
 }
 
 .upload-box p {
-  color: white;
+  color: #eee; /* Light text */
   font-size: 1rem;
   margin-bottom: 5px;
   text-align: center;
 }
 
 .upload-box small {
-  color: #aaa;
+  color: #aaa; /* Light gray for small text */
   font-size: 0.8rem;
   text-align: center;
   padding: 0 10px;
@@ -166,6 +173,7 @@
   width: 100%;
   height: 100%;
   position: relative;
+  background-color: #333; /* Dark background for image container */
 }
 
 .face-preview {
@@ -181,7 +189,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.7); /* Darker overlay */
   color: white;
   display: flex;
   justify-content: center;
@@ -199,7 +207,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color: rgba(255, 255, 255, 0.7);
+  background-color: rgba(0, 0, 0, 0.6); /* Dark overlay */
   border-radius: 4px;
 }
 
@@ -212,6 +220,7 @@
   height: 20px;
   border: 1px solid #000;
   margin: 1px;
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
 }
 
 .visualization-overlay {
@@ -247,19 +256,20 @@
 }
 
 .solve-btn:disabled {
-  background-color: #ccc;
+  background-color: #444; /* Darker disabled button */
   cursor: not-allowed;
+  opacity: 0.7;
 }
 
 .btn-disabled {
-  background-color: #666;
-  color: white;
+  background-color: #444; /* Darker disabled button */
+  color: #aaa;
   cursor: not-allowed;
   border: none;
 }
 
 .btn-disabled:hover {
-  background-color: #666;
+  background-color: #444;
 }
 
 .solution-placeholder {
@@ -274,7 +284,7 @@
   bottom: 0;
   left: 0;
   right: 0;
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(0, 0, 0, 0.7); /* Dark overlay */
   padding: 15px;
   text-align: center;
 }
@@ -288,7 +298,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: rgba(255, 255, 255, 0.7);
+  background-color: rgba(0, 0, 0, 0.7); /* Dark overlay */
 }
 
 .placeholder-content {
@@ -300,32 +310,32 @@
   height: 60px;
   margin: 0 auto 1rem;
   border-radius: 50%;
-  background-color: #e0e0e0;
+  background-color: #444; /* Darker icon background */
   position: relative;
-  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%23666" stroke-width="1"><rect x="2" y="2" width="20" height="20" rx="5" stroke="%23666" fill="none" /><path d="M5 5 L19 19" /><path d="M19 5 L5 19" /></svg>');
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%23aaa" stroke-width="1"><rect x="2" y="2" width="20" height="20" rx="5" stroke="%23aaa" fill="none" /><path d="M5 5 L19 19" /><path d="M19 5 L5 19" /></svg>'); /* Lighter icon */
   background-repeat: no-repeat;
   background-position: center;
 }
 
 .error-message {
-  background-color: #ffebee;
-  border: 1px solid #ffcdd2;
-  color: #c62828;
+  background-color: rgba(244, 67, 54, 0.2); /* Darker red */
+  border: 1px solid #d32f2f;
+  color: #f44336; /* Red text */
   padding: 1rem;
   border-radius: 4px;
   margin-bottom: 1.5rem;
 }
 
-/* Add these styles for the solution preview */
+/* Solution preview */
 .solution-preview {
   display: flex;
   flex-direction: column;
   height: 400px;
   position: relative;
-  background: #f8f9fa;
+  background: #1a1a1a; /* Dark background */
   border-radius: 8px;
   overflow: hidden;
-  border: 1px solid #eee;
+  border: 1px solid #333; /* Darker border */
 }
 
 .solution-preview canvas {
@@ -360,8 +370,6 @@
   }
 }
 
-/* Add these styles to your existing Solver.css file */
-
 .solution-container {
   display: flex;
   flex-direction: column;
@@ -372,11 +380,12 @@
 .cube-visualization {
   position: relative;
   height: 350px;
-  background-color: rgba(255, 255, 255, 0.05);
+  background-color: #1a1a1a; /* Darker background */
   border-radius: 10px;
   margin-bottom: 20px;
   display: flex;
   flex-direction: column;
+  border: 1px solid #333; /* Add border for definition */
 }
 
 .solution-controls {
@@ -385,12 +394,12 @@
   justify-content: center;
   gap: 15px;
   padding: 10px;
-  background-color: rgba(0, 0, 0, 0.1);
+  background-color: rgba(0, 0, 0, 0.3); /* Darker controls background */
   border-radius: 0 0 10px 10px;
 }
 
 .control-btn {
-  background-color: rgba(255, 255, 255, 0.9);
+  background-color: #333; /* Darker button */
   border: none;
   border-radius: 50%;
   width: 40px;
@@ -401,6 +410,7 @@
   align-items: center;
   justify-content: center;
   transition: all 0.2s ease;
+  color: #fff; /* White text for contrast */
 }
 
 .control-btn:hover:not(:disabled) {
@@ -428,7 +438,7 @@
 .current-move {
   text-align: center;
   padding: 10px;
-  background-color: rgba(0, 0, 0, 0.05);
+  background-color: rgba(255, 255, 255, 0.05); /* Subtle light highlight */
   border-radius: 5px;
   margin: 0 auto;
   width: fit-content;
@@ -449,11 +459,9 @@
 
 /* Highlight current move in the solution steps */
 .solution-step.current {
-  background-color: rgba(0, 123, 255, 0.2);
+  background-color: rgba(0, 123, 255, 0.15); /* Darker highlight */
   border-left: 4px solid #007bff;
 }
-
-/* Add these styles to your existing Solver.css file */
 
 .button-group {
   display: flex;
@@ -464,7 +472,7 @@
 .demo-btn {
   flex: 1;
   padding: 0.75rem;
-  background-color: #6c757d;
+  background-color: #555; /* Darker button */
   color: white;
   border: none;
   border-radius: 4px;
@@ -474,7 +482,7 @@
 }
 
 .demo-btn:hover:not(:disabled) {
-  background-color: #5a6268;
+  background-color: #666;
 }
 
 .demo-btn:disabled {

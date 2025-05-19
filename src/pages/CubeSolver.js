@@ -4,7 +4,7 @@ import EnhancedCubeModel from '../components/EnhancedCubeModel';
 import SolutionSteps from '../components/SolutionSteps';
 import './CubeSolver.css';
 
-const URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/';
+const URL = process.env.REACT_APP_API_URL || 'http://localhost:23230/';
 
 const CubeSolver = () => {
     const [faceData, setFaceData] = useState({

@@ -1,23 +1,24 @@
 .solution-viewer {
-  background-color: #fff;
+  background-color: #1a1a1a;
   border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
   padding: 16px;
   height: 100%;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
+  border: 1px solid #333;
 }
 
 .solution-info {
   margin-bottom: 20px;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid #444;
   padding-bottom: 10px;
 }
 
 .solution-info h3 {
   margin: 0 0 12px 0;
-  color: #333;
+  color: #e0e0e0;
   font-size: 1.2rem;
 }
 
@@ -33,18 +34,33 @@
 
 .stat-label {
   font-size: 0.8rem;
-  color: #777;
+  color: #9e9e9e;
 }
 
 .stat-value {
   font-size: 1rem;
   font-weight: 600;
-  color: #333;
+  color: #e0e0e0;
 }
 
 .solution-steps-list {
   flex: 1;
   overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #555 #1a1a1a;
+}
+
+.solution-steps-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.solution-steps-list::-webkit-scrollbar-track {
+  background: #1a1a1a;
+}
+
+.solution-steps-list::-webkit-scrollbar-thumb {
+  background-color: #555;
+  border-radius: 6px;
 }
 
 .solution-step {
@@ -52,21 +68,22 @@
   border-radius: 6px;
   overflow: hidden;
   transition: box-shadow 0.2s ease;
-  border: 1px solid #eee;
+  border: 1px solid #333;
+  background-color: #242424;
 }
 
 .solution-step.active {
-  border-color: #3498db;
-  box-shadow: 0 0 0 1px #3498db;
+  border-color: #2196f3;
+  box-shadow: 0 0 0 1px #2196f3;
 }
 
 .solution-step.expanded {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
 }
 
 .step-header {
   padding: 10px 12px;
-  background-color: #f9f9f9;
+  background-color: #242424;
   cursor: pointer;
   position: relative;
   display: flex;
@@ -79,12 +96,12 @@
   left: 0;
   height: 3px;
   width: 100%;
-  background-color: #eee;
+  background-color: #333;
 }
 
 .step-progress-bar {
   height: 100%;
-  background-color: #3498db;
+  background-color: #2196f3;
   transition: width 0.3s ease;
 }
 
@@ -94,22 +111,23 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  color: #e0e0e0;
 }
 
 .step-toggle {
   font-size: 0.7rem;
-  color: #777;
+  color: #9e9e9e;
 }
 
 .step-description {
   margin: 0;
   font-size: 0.9rem;
-  color: #666;
+  color: #bdbdbd;
 }
 
 .step-moves {
   padding: 12px;
-  background-color: #fff;
+  background-color: #1e1e1e;
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
@@ -122,29 +140,31 @@
   min-width: 30px;
   height: 30px;
   padding: 0 6px;
-  background-color: #f5f5f5;
+  background-color: #333;
   border-radius: 4px;
   font-family: monospace;
   font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
+  color: #e0e0e0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 .move:hover {
-  background-color: #e0e0e0;
+  background-color: #424242;
 }
 
 .move.completed {
-  background-color: #e1f5fe;
-  color: #0277bd;
+  background-color: #1565c0;
+  color: #e0e0e0;
 }
 
 .move.active {
-  background-color: #3498db;
+  background-color: #2196f3;
   color: white;
   transform: scale(1.1);
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 5px rgba(33, 150, 243, 0.4);
 }
 
 .solution-viewer-empty {
@@ -153,7 +173,7 @@
   justify-content: center;
   height: 100%;
   text-align: center;
-  color: #777;
+  color: #9e9e9e;
   font-style: italic;
 }
 
